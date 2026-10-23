@@ -1,9 +1,28 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { useApi } from "../useApi";
+import api from "../api";
 
-// GET /oceania returns the top 10 Oceania countries by life expectancy
 export function Oceania() {
-  const { data: countries, error, loading } = useApi("/oceania");
+  const [countries, setCountries] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // GET /oceania returns the top 10 Oceania countries by life expectancy
+  useEffect(() => {
+    const fetchOceaniaCountries = async () => {
+      try {
+        const response = await api.get("/oceania");
+        setCountries(response.data);
+      } catch (error) {
+        console.error("Error fetching Oceania countries:", error.message);
+        setError("Failed to fetch Oceania countries.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOceaniaCountries();
+  }, []);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="error">{error}</p>;

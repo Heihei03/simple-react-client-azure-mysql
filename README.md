@@ -46,8 +46,8 @@ Country names must match the database exactly, e.g. `/country/New Zealand`.
 ## How it fits together
 
 - `src/api.js`: an Axios instance that adds `VITE_API_HOST` to the start of every request
-- `src/useApi.js`: a hook that fetches a path when a page loads and returns `{ data, error, loading }`
 - `src/App.jsx`: the routes, matching each URL to a page in `src/pages/`
+- `src/pages/`: one component per page. Each fetches its data in a `useEffect` and keeps it in `useState`
 - `src/Layout.jsx`: the header and sidebar. The current page renders in its `<Outlet />`, inside an error boundary
 
 ## Deploying to Azure Static Web Apps

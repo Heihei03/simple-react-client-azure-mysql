@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
-import { useApi } from "../useApi";
+import api from "../api";
 
 // The columns from the country table we show, and their labels
 const fields = [
@@ -22,18 +23,35 @@ const formatValue = (column, value) => {
   return withCommas.includes(column) ? value.toLocaleString() : value;
 };
 
-// GET /country/:countryname returns [country], or 404 if the name doesn't match
 export function Country() {
   // Read :countryname from the URL, e.g. /country/New Zealand
   const { countryname } = useParams();
-  const { data, error, loading } = useApi(
-    `/country/${encodeURIComponent(countryname)}`,
-  );
+  const [country, setCountry] = useState(null);
+  const [error, setError] = useState(null);
 
-  if (loading) return <p>Loading...</p>;
+  // GET /country/:countryname returns [country], or 404 if the name doesn't match.
+  // [countryname] means this runs again when the URL changes to another country.
+  useEffect(() => {
+    const fetchCountry = async () => {
+      setCountry(null);
+      setError(null);
+      try {
+        const response = await api.get(
+          `/country/${encodeURIComponent(countryname)}`,
+        );
+        setCountry(response.data[0]);
+      } catch (error) {
+        console.error(`Error fetching ${countryname}:`, error.message);
+        // Our API sends { error: "..." } for a 404, so show that if there is one
+        setError(error.response?.data?.error || "Failed to fetch country.");
+      }
+    };
+
+    fetchCountry();
+  }, [countryname]);
+
   if (error) return <p className="error">{error}</p>;
-
-  const country = data[0];
+  if (!country) return <p>Loading...</p>;
 
   return (
     <div>

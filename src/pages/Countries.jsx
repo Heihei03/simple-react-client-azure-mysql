@@ -1,9 +1,28 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { useApi } from "../useApi";
+import api from "../api";
 
-// GET / returns every country
 export function Countries() {
-  const { data: countries, error, loading } = useApi("/");
+  const [countries, setCountries] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // GET / returns every country. The empty [] means this runs once, when the page loads.
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await api.get("/");
+        setCountries(response.data);
+      } catch (error) {
+        console.error("Error fetching countries:", error.message);
+        setError("Failed to fetch countries.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCountries();
+  }, []);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="error">{error}</p>;
