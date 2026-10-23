@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import api from "../api";
+import api, { errorMessage } from "../api";
 
 export function Oceania() {
   const [countries, setCountries] = useState([]);
@@ -15,7 +15,7 @@ export function Oceania() {
         setCountries(response.data);
       } catch (error) {
         console.error("Error fetching Oceania countries:", error.message);
-        setError("Failed to fetch Oceania countries.");
+        setError(errorMessage(error));
       } finally {
         setLoading(false);
       }
