@@ -1,27 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
-import api from "../api";
-
-// The columns from the country table we show, and their labels
-const fields = [
-  ["Code", "Code"],
-  ["Region", "Region"],
-  ["Population", "Population"],
-  ["LifeExpectancy", "Life expectancy"],
-  ["SurfaceArea", "Surface area (km²)"],
-  ["IndepYear", "Independence year"],
-  ["GovernmentForm", "Government"],
-  ["HeadOfState", "Head of state"],
-  ["GNP", "GNP (million USD)"],
-];
-
-// Big numbers get commas (5,000,000), but not years or life expectancy
-const withCommas = ["Population", "SurfaceArea", "GNP"];
-
-const formatValue = (column, value) => {
-  if (value === null || value === "") return "unknown";
-  return withCommas.includes(column) ? value.toLocaleString() : value;
-};
+import api, { errorMessage } from "../api";
 
 export function Country() {
   // Read :countryname from the URL, e.g. /country/New Zealand
@@ -46,10 +25,7 @@ export function Country() {
         if (!ignore) setCountry(response.data[0]);
       } catch (error) {
         console.error(`Error fetching ${countryname}:`, error.message);
-        // Our API sends { error: "..." } for a 404, so show that if there is one
-        if (!ignore) {
-          setError(error.response?.data?.error || "Failed to fetch country.");
-        }
+        if (!ignore) setError(errorMessage(error));
       } finally {
         if (!ignore) setLoading(false);
       }
@@ -66,6 +42,7 @@ export function Country() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="error">{error}</p>;
 
+  // Some countries have no value for a column, so ?? and || show "unknown" instead
   return (
     <div>
       <h2>{country.Name}</h2>
@@ -78,12 +55,35 @@ export function Country() {
             </Link>
           </dd>
         </div>
-        {fields.map(([column, label]) => (
-          <div key={column}>
-            <dt>{label}</dt>
-            <dd>{formatValue(column, country[column])}</dd>
-          </div>
-        ))}
+        <div>
+          <dt>Code</dt>
+          <dd>{country.Code}</dd>
+        </div>
+        <div>
+          <dt>Local name</dt>
+          <dd>{country.LocalName}</dd>
+        </div>
+        <div>
+          <dt>Region</dt>
+          <dd>{country.Region}</dd>
+        </div>
+        <div>
+          <dt>Population</dt>
+          {/* toLocaleString() adds commas: 3862000 becomes 3,862,000 */}
+          <dd>{country.Population.toLocaleString()}</dd>
+        </div>
+        <div>
+          <dt>Life expectancy</dt>
+          <dd>{country.LifeExpectancy ?? "unknown"}</dd>
+        </div>
+        <div>
+          <dt>Independence year</dt>
+          <dd>{country.IndepYear ?? "unknown"}</dd>
+        </div>
+        <div>
+          <dt>Head of state</dt>
+          <dd>{country.HeadOfState || "unknown"}</dd>
+        </div>
       </dl>
     </div>
   );

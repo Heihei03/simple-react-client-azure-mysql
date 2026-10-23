@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import api from "../api";
+import api, { errorMessage } from "../api";
 
 export function Population() {
   // Read :continent from the URL, e.g. /population/Europe
@@ -28,12 +28,7 @@ export function Population() {
           `Error fetching population of ${continent}:`,
           error.message,
         );
-        // Our API sends { error: "..." } for a 404, so show that if there is one
-        if (!ignore) {
-          setError(
-            error.response?.data?.error || "Failed to fetch population.",
-          );
-        }
+        if (!ignore) setError(errorMessage(error));
       } finally {
         if (!ignore) setLoading(false);
       }

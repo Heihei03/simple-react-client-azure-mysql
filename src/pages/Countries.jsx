@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import api from "../api";
+import api, { errorMessage } from "../api";
 
 export function Countries() {
   const [countries, setCountries] = useState([]);
@@ -15,7 +15,7 @@ export function Countries() {
         setCountries(response.data);
       } catch (error) {
         console.error("Error fetching countries:", error.message);
-        setError("Failed to fetch countries.");
+        setError(errorMessage(error));
       } finally {
         setLoading(false);
       }
