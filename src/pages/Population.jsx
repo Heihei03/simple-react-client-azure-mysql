@@ -47,10 +47,8 @@ export function Population() {
 
   return (
     <div>
-      <h2>Population of {population.Continent}</h2>
-      <p className="big-number">
-        {population.TotalPopulation.toLocaleString()}
-      </p>
+      <h2>Population of {continent}</h2>
+      <p className="big-number">{population.toLocaleString()}</p>
     </div>
   );
 }
