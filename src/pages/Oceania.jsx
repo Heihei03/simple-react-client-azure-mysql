@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { useApi } from "../useApi";
 
 // GET /oceania returns the top 10 Oceania countries by life expectancy

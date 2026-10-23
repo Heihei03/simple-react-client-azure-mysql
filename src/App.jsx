@@ -1,4 +1,5 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter } from "react-router";
+import { RouterProvider } from "react-router/dom";
 import { Layout } from "./Layout";
 import { Home } from "./pages/Home";
 import { Countries } from "./pages/Countries";
@@ -25,10 +26,7 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => {
-  // future flag opts in to React Router v7 behaviour now, which also hides a console warning
-  return (
-    <RouterProvider router={router} future={{ v7_startTransition: true }} />
-  );
+  return <RouterProvider router={router} />;
 };
 
 export default App;

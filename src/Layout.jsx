@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router";
 import { ErrorBoundary } from "react-error-boundary";
 import PropTypes from "prop-types";
 

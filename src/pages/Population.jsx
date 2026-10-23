@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { useApi } from "../useApi";
 
 // GET /population/:continent returns { Continent, TotalPopulation }, or 404 if there's no such continent
