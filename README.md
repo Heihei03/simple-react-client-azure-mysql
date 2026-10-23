@@ -35,7 +35,17 @@ Country names must match the database exactly: `/country/New Zealand` works, `/c
 1. Deploy the API to Azure App Service first, and copy its URL.
 2. In your GitHub repo, add a secret called `VITE_API_HOST` with that URL (Settings > Secrets and variables > Actions).
 3. Create a Static Web App in Azure from your repo. Use `/` for the app location and `dist` for the output location.
-4. Azure adds a new workflow file to `.github/workflows/`. Copy the two `env:` lines for `VITE_API_HOST` from the old workflow into it, then delete the old one.
+4. Azure adds a workflow file to `.github/workflows/`. Pull it, then pass your secret to the build by adding the `env:` lines to its "Build And Deploy" step:
+
+   ```yaml
+   - name: Build And Deploy
+     id: builddeploy
+     uses: Azure/static-web-apps-deploy@v1
+     env:
+       VITE_API_HOST: ${{ secrets.VITE_API_HOST }}
+   ```
+
+   Commit and push. The workflow runs again and deploys with your API URL.
 
 Vite builds the API URL into the app, so after changing the secret, re-run the workflow.
 

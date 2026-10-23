@@ -28,30 +28,43 @@ export function Country() {
   const { countryname } = useParams();
   const [country, setCountry] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // GET /country/:countryname returns [country], or 404 if the name doesn't match.
   // [countryname] means this runs again when the URL changes to another country.
   useEffect(() => {
+    // If the user clicks another country before this reply arrives, ignore the old reply
+    let ignore = false;
+
     const fetchCountry = async () => {
-      setCountry(null);
+      setLoading(true);
       setError(null);
       try {
         const response = await api.get(
           `/country/${encodeURIComponent(countryname)}`,
         );
-        setCountry(response.data[0]);
+        if (!ignore) setCountry(response.data[0]);
       } catch (error) {
         console.error(`Error fetching ${countryname}:`, error.message);
         // Our API sends { error: "..." } for a 404, so show that if there is one
-        setError(error.response?.data?.error || "Failed to fetch country.");
+        if (!ignore) {
+          setError(error.response?.data?.error || "Failed to fetch country.");
+        }
+      } finally {
+        if (!ignore) setLoading(false);
       }
     };
 
     fetchCountry();
+
+    // React runs this cleanup before the next fetch, and when the user leaves the page
+    return () => {
+      ignore = true;
+    };
   }, [countryname]);
 
+  if (loading) return <p>Loading...</p>;
   if (error) return <p className="error">{error}</p>;
-  if (!country) return <p>Loading...</p>;
 
   return (
     <div>

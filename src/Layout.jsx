@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useLocation } from "react-router";
 import { ErrorBoundary } from "react-error-boundary";
 import PropTypes from "prop-types";
+import { API_HOST } from "./api";
 
 const links = [
   { to: "/", label: "Home" },
@@ -50,6 +51,15 @@ export function Layout() {
       </nav>
 
       <main className="content">
+        {/* Without API_HOST, requests go to this app instead of the API and the pages break */}
+        {!API_HOST && (
+          <p className="warning">
+            VITE_API_HOST is not set, so the app can&apos;t reach the API.
+            Locally, copy <code>.env.example</code> to <code>.env</code> and
+            restart <code>npm run dev</code>. On Azure, add the{" "}
+            <code>VITE_API_HOST</code> secret and re-run the workflow.
+          </p>
+        )}
         {/* resetKeys clears the error when the user goes to another page */}
         <ErrorBoundary
           FallbackComponent={ErrorFallback}

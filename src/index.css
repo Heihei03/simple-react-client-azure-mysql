@@ -84,6 +84,12 @@ a {
   color: #dc2626;
 }
 
+.warning {
+  padding: 0.75rem 1rem;
+  border-left: 4px solid #d97706;
+  background: #fef3c7;
+}
+
 .big-number {
   font-size: 2.5rem;
   font-weight: 700;
