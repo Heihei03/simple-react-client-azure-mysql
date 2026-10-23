@@ -1,61 +1,34 @@
-// Import required modules
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Layout } from "./Layout";
+import { Home } from "./pages/Home";
+import { Countries } from "./pages/Countries";
+import { Oceania } from "./pages/Oceania";
+import { Country } from "./pages/Country";
+import { Population } from "./pages/Population";
+import { NotFound } from "./pages/NotFound";
 
-// Get the API_HOST from the .env file using Vite https://vite.dev/guide/env-and-mode#env-variables
-const API_HOST = import.meta.env.VITE_API_HOST;
-console.log("API_HOST:", API_HOST);
+// Each route matches a URL to a page. The pages render inside <Layout />'s <Outlet />.
+// The :countryname and :continent parts are read in the page with useParams().
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      { index: true, element: <Home /> },
+      { path: "allcountries", element: <Countries /> },
+      { path: "oceania", element: <Oceania /> },
+      { path: "country/:countryname", element: <Country /> },
+      { path: "population/:continent", element: <Population /> },
+      { path: "*", element: <NotFound /> },
+    ],
+  },
+]);
 
-// Define the App component
 const App = () => {
-  const [countries, setCountries] = useState([]);
-  const [error, setError] = useState(null);
-
-  // Function to fetch Oceania countries
-  const fetchOceaniaCountries = async () => {
-    try {
-      const response = await axios.get(`${API_HOST}/oceania`);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching Oceania countries:", error.message);
-      throw new Error("Failed to fetch Oceania countries");
-    }
-  };
-
-  // Function to display Oceania countries
-  useEffect(() => {
-    const displayOceaniaCountries = async () => {
-      try {
-        const fetchedCountries = await fetchOceaniaCountries();
-        if (fetchedCountries && fetchedCountries.length > 0) {
-          setCountries(fetchedCountries);
-        } else {
-          setError("No countries found for Oceania.");
-        }
-      } catch (error) {
-        console.log("Error displaying Oceania countries:", error);
-        setError("Failed to display Oceania countries.");
-      }
-    };
-
-    displayOceaniaCountries();
-  }, []);
-
+  // future flag opts in to React Router v7 behaviour now, which also hides a console warning
   return (
-    <div>
-      <h1>Oceania Countries</h1>
-      {error && <p>{error}</p>}
-      <ul>
-        {countries.map((country, index) => (
-          <li key={index}>
-            <strong>{country.Name}</strong> - Life Expectancy:{" "}
-            {country.LifeExpectancy}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <RouterProvider router={router} future={{ v7_startTransition: true }} />
   );
 };
 
-// Export the App component
 export default App;
